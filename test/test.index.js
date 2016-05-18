@@ -7,135 +7,282 @@
 
 'use strict';
 
-var random = require('../src/index.js');
-var object = require('blear.utils.object');
+var fun = require('../src/index.js');
+
+var fn1 = function (a, b) {
+    a = (this.a || 0) + (a || 0);
+    b = (this.b || 0) + (b || 0);
+    return a + b;
+};
+var context1 = {
+    a: 1,
+    b: 2
+};
+var context2 = {
+    a: 3,
+    b: 4
+};
 
 describe('index.js', function () {
-    it('.number', function (done) {
-        var min1 = 0;
-        var max1 = 5;
-        var map = {};
-        var i = 10000;
+    it('.noop', function () {
+        var fn1 = fun.noop();
+        var fn2 = fun.noop(fn1);
+        var fn3 = function () {
+            // ...
+        };
+        var fn4 = fun.noop(fn3);
+        var fn5 = fun.noop();
 
-        while (i--) {
-            var rn = random.number(max1, min1);
-            map[rn] = map[rn] || {times: 0};
-            map[rn].times++;
-        }
+        expect(typeof fn1).toEqual('function');
+        expect(typeof fn2).toEqual('function');
+        expect(typeof fn3).toEqual('function');
+        expect(typeof fn4).toEqual('function');
+        expect(typeof fn5).toEqual('function');
+        expect(fn2).toBe(fn1);
+        expect(fn3).toBe(fn3);
+        expect(fn5).toBe(fn1);
+    });
 
-        var keys = object.keys(map);
+    it('.name', function () {
+        var fn1 = function fn2() {
 
-        expect(keys.length).toEqual(6);
-        expect(map[0].times).toBeGreaterThan(1);
-        expect(map[1].times).toBeGreaterThan(1);
-        expect(map[2].times).toBeGreaterThan(1);
-        expect(map[3].times).toBeGreaterThan(1);
-        expect(map[4].times).toBeGreaterThan(1);
-        expect(map[5].times).toBeGreaterThan(1);
+        };
+        function fn3(){};
+        expect(fun.name(function(){})).toEqual('anonymous');
+        expect(fun.name(fn1)).toEqual('fn2');
+        expect(fun.name(fn3)).toEqual('fn3');
+    });
 
-        expect(random.number(0,0)).toEqual(0);
+    it('.bind', function (done) {
+        var fn2 = fun.bind(fn1, context1);
+        var fn3 = fun.bind(fn1, context1, 10);
+        var fn4 = fun.bind(fn1, context1, 10, 11);
+        var fn5 = fun.bind(fn2, context2);
+        var fn6 = fun.bind(fn2, context2, 10);
+        var fn7 = fun.bind(fn2, context2, 10, 11);
+        var fn8 = fun.bind(fn3, context2);
+        var fn9 = fun.bind(fn3, context2, 10);
+        var fn10 = fun.bind(fn3, context2, 10, 11);
+        var fn11 = fun.bind(fn4, context2);
+        var fn12 = fun.bind(fn4, context2, 10);
+        var fn13 = fun.bind(fn4, context2, 10, 11);
+
+        expect(fn2()).toEqual(3);
+        expect(fn2(3)).toEqual(6);
+        expect(fn2(3, 4)).toEqual(10);
+        expect(fn2.call(context2)).toEqual(3);
+        expect(fn2.call(context2, 3)).toEqual(6);
+        expect(fn2.call(context2, 3, 4)).toEqual(10);
+
+        expect(fn3()).toEqual(13);
+        expect(fn3(3)).toEqual(16);
+        expect(fn3(3, 4)).toEqual(16);
+        expect(fn3.call(context2)).toEqual(13);
+        expect(fn3.call(context2, 3)).toEqual(16);
+        expect(fn3.call(context2, 3, 4)).toEqual(16);
+
+        expect(fn4()).toEqual(24);
+        expect(fn4(3)).toEqual(24);
+        expect(fn4(3, 4)).toEqual(24);
+        expect(fn4.call(context2)).toEqual(24);
+        expect(fn4.call(context2, 3)).toEqual(24);
+        expect(fn4.call(context2, 3, 4)).toEqual(24);
+
+        expect(fn5()).toEqual(3);
+        expect(fn5(3)).toEqual(6);
+        expect(fn5(3, 4)).toEqual(10);
+        expect(fn5.call(context2)).toEqual(3);
+        expect(fn5.call(context2, 3)).toEqual(6);
+        expect(fn5.call(context2, 3, 4)).toEqual(10);
+
+        expect(fn6()).toEqual(13);
+        expect(fn6(3)).toEqual(16);
+        expect(fn6(3, 4)).toEqual(16);
+        expect(fn6.call(context2)).toEqual(13);
+        expect(fn6.call(context2, 3)).toEqual(16);
+        expect(fn6.call(context2, 3, 4)).toEqual(16);
+
+        expect(fn7()).toEqual(24);
+        expect(fn7(3)).toEqual(24);
+        expect(fn7(3, 4)).toEqual(24);
+        expect(fn7.call(context2)).toEqual(24);
+        expect(fn7.call(context2, 3)).toEqual(24);
+        expect(fn7.call(context2, 3, 4)).toEqual(24);
+
+        expect(fn8()).toEqual(13);
+        expect(fn8(3)).toEqual(16);
+        expect(fn8(3, 4)).toEqual(16);
+        expect(fn8.call(context2)).toEqual(13);
+        expect(fn8.call(context2, 3)).toEqual(16);
+        expect(fn8.call(context2, 3, 4)).toEqual(16);
+
+        expect(fn9()).toEqual(23);
+        expect(fn9(3)).toEqual(23);
+        expect(fn9(3, 4)).toEqual(23);
+        expect(fn9.call(context2)).toEqual(23);
+        expect(fn9.call(context2, 3)).toEqual(23);
+        expect(fn9.call(context2, 3, 4)).toEqual(23);
+
+        expect(fn10()).toEqual(23);
+        expect(fn10(3)).toEqual(23);
+        expect(fn10(3, 4)).toEqual(23);
+        expect(fn10.call(context2)).toEqual(23);
+        expect(fn10.call(context2, 3)).toEqual(23);
+        expect(fn10.call(context2, 3, 4)).toEqual(23);
+
+        expect(fn11()).toEqual(24);
+        expect(fn11(3)).toEqual(24);
+        expect(fn11(3, 4)).toEqual(24);
+        expect(fn11.call(context2)).toEqual(24);
+        expect(fn11.call(context2, 3)).toEqual(24);
+        expect(fn11.call(context2, 3, 4)).toEqual(24);
+
+        expect(fn12()).toEqual(24);
+        expect(fn12(3)).toEqual(24);
+        expect(fn12(3, 4)).toEqual(24);
+        expect(fn12.call(context2)).toEqual(24);
+        expect(fn12.call(context2, 3)).toEqual(24);
+        expect(fn12.call(context2, 3, 4)).toEqual(24);
+
+        expect(fn13()).toEqual(24);
+        expect(fn13(3)).toEqual(24);
+        expect(fn13(3, 4)).toEqual(24);
+        expect(fn13.call(context2)).toEqual(24);
+        expect(fn13.call(context2, 3)).toEqual(24);
+        expect(fn13.call(context2, 3, 4)).toEqual(24);
 
         done();
     });
 
-    it('.string', function (done) {
-        var str1 = random.string();
-        var str2 = random.string('!@');
-        var str3 = random.string(20, '!@');
-        var str4 = random.string(20, 'a');
-        var str5 = random.string(20, 'A');
-        var str6 = random.string(20, '0');
 
-        expect(str1.length).toEqual(6);
-        expect(str1).toMatch(/^[a-zA-Z\d]{6}$/);
+    // 重复
+    var repeat = function (times, callback, complete) {
+        var index = 0;
+        var timeid = setInterval(function () {
+            index++;
 
-        expect(str2.length).toEqual(6);
-        expect(str2).toMatch(/^[!@]{6}$/);
+            if (index >= times) {
+                clearInterval(timeid);
+                complete && complete();
+            } else {
+                callback();
+            }
+        }, 1);
+    };
 
-        expect(str3.length).toEqual(20);
-        expect(str3).toMatch(/^[!@]{20}$/);
+    it('.throttle', function (done) {
+        var times = 100;
+        var index = 0;
+        repeat(times, fun.throttle(function () {
+            index++;
+        }), function () {
+            expect(index < times).toBe(true);
+            done();
+        });
+    });
 
-        expect(str4.length).toEqual(20);
-        expect(str4).toMatch(/^[a-z]{20}$/);
+    it('.debounce', function (done) {
+        var times = 100;
+        var index = 0;
+        repeat(times, fun.debounce(function () {
+            index++;
+            expect(index).toEqual(1);
+            done();
+        }));
+    });
 
-        expect(str5.length).toEqual(20);
-        expect(str5).toMatch(/^[A-Z]{20}$/);
+    it('.once', function (done) {
+        var times = 0;
+        var index = 0;
+        var fn5 = fun.once(function () {
+            times++;
+        });
 
-        expect(str6.length).toEqual(20);
-        expect(str6).toMatch(/^\d{20}$/);
+        while (index++ < 10) {
+            fn5();
+        }
+
+        expect(times).toEqual(1);
+        done();
+    });
+
+    it('.toggle', function (done) {
+        var count = 0;
+        var fns = [];
+
+        fns.push(function () {
+            count += 1;
+        });
+
+        fns.push(function () {
+            count += 2;
+        });
+
+        fns.push(function () {
+            count += 3;
+        });
+
+        fns.push(function () {
+            count += 4;
+        });
+
+        var list1 = fns.slice(0, 1);
+        var list2 = fns.slice(0, 2);
+        var list3 = fns.slice(0, 3);
+        var list4 = fns.slice(0, 4);
+
+        var fn1 = fun.toggle.apply(fun, list1);
+        var fn2 = fun.toggle.apply(fun, list2);
+        var fn3 = fun.toggle.apply(fun, list3);
+        var fn4 = fun.toggle.apply(fun, list4);
+
+        // toggle:1
+        var index = 0;
+        while (index++ < 120) {
+            fn1();
+        }
+        expect(count).toEqual(120 * 1);
+
+        // toggle:2
+        index = 0;
+        count = 0;
+        while (index++ < 120) {
+            fn2();
+        }
+        expect(count).toEqual(60 * 1 + 60 * 2);
+
+        // toggle:3
+        index = 0;
+        count = 0;
+        while (index++ < 120) {
+            fn3();
+        }
+        expect(count).toEqual(40 * 1 + 40 * 2 + 40 * 3);
+
+        // toggle:4
+        index = 0;
+        count = 0;
+        while (index++ < 120) {
+            fn4();
+        }
+        expect(count).toEqual(30 * 1 + 30 * 2 + 30 * 3 + 30 * 4);
 
         done();
     });
 
-    it('.hexColor', function (done) {
-        expect(random.hexColor()).toMatch(/^#[0-9a-f]{6}$/);
-        expect(random.hexColor()).toMatch(/^#[0-9a-f]{6}$/);
+    it('.until', function (done) {
+        var n1 = 0;
+        var n2 = 0.6;
+        var n3 = 0;
 
-        done();
-    });
-
-    it('.guid:default', function () {
-        var t = 10000;
-        var map = {};
-        var findDupliate = false;
-
-        while (t--) {
-            var r = random.guid();
-            map[r] = map[r] || 0;
-            map[r]++;
-
-            if (map[r] > 1) {
-                findDupliate = true;
-                break;
-            }
-        }
-
-        expect(findDupliate).toBe(false);
-    });
-
-    it('.guid:timeStamp', function () {
-        var t = 10000;
-        var map = {};
-        var findDupliate = false;
-        var lastR = '';
-
-        while (t--) {
-            var r = random.guid(true);
-            map[r] = map[r] || 0;
-            map[r]++;
-
-            if (map[r] > 1) {
-                findDupliate = true;
-                lastR = r;
-                break;
-            }
-        }
-
-        var timeStamp = lastR.slice(0, 13);
-        var date = new Date(timeStamp * 1);
-
-        expect(findDupliate).toBe(false);
-        expect(date.getTime()).not.toBe(NaN);
-        expect(date.getTime()).toBeLessThan(new Date().getTime());
-    });
-
-    it('.guid:maxLength', function () {
-        var t = 10000;
-        var map = {};
-        var findDupliate = false;
-        var lastR = '';
-
-        while (t--) {
-            var r = random.guid(20);
-            map[r] = map[r] || 0;
-            map[r]++;
-
-            if (map[r] > 1) {
-                findDupliate = true;
-                lastR = r;
-                break;
-            }
-        }
-        expect(findDupliate).toBe(false);
+        fun.until(function () {
+            console.log('n1:', n1, 'n2:', n2, 'n3:', n3);
+            expect(n1).toBeGreaterThan(n2);
+            done();
+        }, function () {
+            n1 = Math.random();
+            n3++;
+            return n1 > n2;
+        });
     });
 });
