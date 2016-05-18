@@ -16,7 +16,7 @@
   "keywords": [
     "blear",
     "utils",
-    "random",
+    "function",
     "cloudcome",
     "ydr.me"
   ],
@@ -36,15 +36,14 @@
   },
   "dependencies": {},
   "peerDependencies": {
+    "blear.polyfills.function": "1.x",
+    "blear.utils.date": "1.x",
     "blear.utils.access": "1.x",
-    "blear.utils.number": "1.x",
-    "blear.utils.string": "1.x",
+    "blear.utils.time": "1.x",
+    "blear.utils.array": "1.x",
     "blear.utils.typeis": "1.x"
   },
   "devDependencies": {
-    "blear.polyfills.object": "^1.0.0",
-    "blear.utils.object": "^1.0.1",
-    "blear.utils.typeis": "^1.0.1",
     "jasmine-core": "^2.4.1",
     "karma": "^0.13.22",
     "karma-coolie": "2.x",
