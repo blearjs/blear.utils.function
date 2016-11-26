@@ -1,7 +1,11 @@
+/**
+ * 函数相关
+ * @author 云淡然
+ * @update 2016年5月18日14:20:10
+ * @update 2016年11月26日14:41:29
+ */
+
 'use strict';
-
-require('blear.polyfills.function');
-
 
 var date =   require('blear.utils.date');
 var access = require('blear.utils.access');
