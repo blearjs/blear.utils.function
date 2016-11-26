@@ -1,6 +1,6 @@
 {
   "name": "blear.utils.function",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "function utils",
   "scripts": {
     "live": "browser-sync start --config bs-config.js",
@@ -37,7 +37,6 @@
   },
   "dependencies": {},
   "peerDependencies": {
-    "blear.polyfills.function": "1.x",
     "blear.utils.date": "1.x",
     "blear.utils.access": "1.x",
     "blear.utils.time": "1.x",
