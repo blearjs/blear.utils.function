@@ -24,14 +24,14 @@ var context2 = {
 };
 
 describe('index.js', function () {
-    it('.noop', function () {
-        var fn1 = fun.noop();
-        var fn2 = fun.noop(fn1);
+    it('.ensure', function () {
+        var fn1 = fun.ensure();
+        var fn2 = fun.ensure(fn1);
         var fn3 = function () {
             // ...
         };
-        var fn4 = fun.noop(fn3);
-        var fn5 = fun.noop();
+        var fn4 = fun.ensure(fn3);
+        var fn5 = fun.ensure();
 
         expect(typeof fn1).toEqual('function');
         expect(typeof fn2).toEqual('function');
@@ -41,6 +41,10 @@ describe('index.js', function () {
         expect(fn2).toBe(fn1);
         expect(fn3).toBe(fn3);
         expect(fn5).toBe(fn1);
+    });
+
+    it('.noop', function () {
+        fun.noop();
     });
 
     it('.name', function () {

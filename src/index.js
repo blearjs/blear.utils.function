@@ -7,11 +7,12 @@
 
 'use strict';
 
-var date =   require('blear.utils.date');
+var date = require('blear.utils.date');
 var access = require('blear.utils.access');
-var array =  require('blear.utils.array');
-var time =   require('blear.utils.time');
+var array = require('blear.utils.array');
+var time = require('blear.utils.time');
 var typeis = require('blear.utils.typeis');
+var debug = require('blear.utils.debug');
 
 var throttleTimeout = exports.throttleTimeout = 30;
 var debounceTimeout = exports.debounceTimeout = 30;
@@ -25,13 +26,14 @@ var noop = function () {
  * @param fn
  * @returns {*}
  */
-exports.noop = function (fn) {
+var ensure = exports.ensure = function (fn) {
     if (typeis.Function(fn)) {
         return fn;
     }
 
     return noop;
 };
+exports.noop = debug.deprecate(ensure, '`fun.noop` 已被废弃，请使用 `fun.ensure` 代替！');
 
 
 /**
@@ -65,8 +67,8 @@ exports.bind = function (fn, context/*arguments*/) {
  *
  * @example
  * window.onscroll = controller.throttle(function(){
-     *    // 至少需要每隔 30ms 后执行
-     * });
+ *    // 至少需要每隔 30ms 后执行
+ * });
  */
 exports.throttle = function (fn, timeout) {
     timeout = timeout || throttleTimeout;
@@ -92,8 +94,8 @@ exports.throttle = function (fn, timeout) {
  *
  * @example
  * window.onscroll = controller.debounce(function(){
-     *    // 只在最后一次触发的 30ms 后执行
-     * });
+ *    // 只在最后一次触发的 30ms 后执行
+ * });
  */
 exports.debounce = function (fn, timeout) {
     timeout = timeout || debounceTimeout;
@@ -117,8 +119,8 @@ exports.debounce = function (fn, timeout) {
  *
  * @example
  * document.onclick = controller.once(function(){
-     *     // 最多执行 1 次
-     * });
+ *     // 最多执行 1 次
+ * });
  */
 exports.once = function (fn) {
     var executed = false;
